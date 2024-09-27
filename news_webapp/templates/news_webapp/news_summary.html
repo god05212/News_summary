@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>검색 결과</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-image: url("/static/news_webapp/images/main.jpg"); /* 배경 이미지 추가 */
+            background-size: cover; /* 이미지가 전체 화면을 채우도록 설정 */
+            background-position: center; /* 이미지 중앙 정렬 */
+            color: #9b59b6; /* 텍스트 색상 */
+        }
+        h2 {
+            text-align: center;
+        }
+        ol {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        a {
+            color: #4B0082; /* 링크 색상 */
+            text-decoration: none; /* 링크에 밑줄 제거 */
+        }
+        a:hover {
+            text-decoration: underline; /* 링크에 마우스 오버 시 밑줄 추가 */
+        }
+        /* 추가 스타일 */
+        .container {
+            background-color: rgba(255, 255, 255, 0.8); /* 배경을 약간 흐리게 */
+            padding: 20px;
+            border-radius: 10px; /* 모서리 둥글게 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 그림자 추가 */
+            max-width: 600px; /* 최대 너비 설정 */
+            text-align: left; /* 텍스트 왼쪽 정렬 */
+        }
+        .recommended-searches {
+            text-align: center; /* 추천 검색어 가운데 정렬 */
+        }
+        .back-link {
+            text-align: right; /* 다시 검색하기 오른쪽 정렬 */
+            margin-top: 20px; /* 위쪽 여백 추가 */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>"{{ query }}"에 대한 검색 결과</h2>
+        <ol>
+            {% for title, link, text in articles %}
+                <li>
+                    {{ forloop.counter }}. <a href="{{ link }}">{{ title }}</a><br>
+                    <p>{{ text }}</p>
+                </li>
+            {% empty %}
+                <li>검색 결과가 없습니다.</li>
+            {% endfor %}
+        </ol>
+
+        <h2 class="recommended-searches">추천 연관 검색어</h2>
+        <ol class="recommended-searches">
+            {% for noun, count in top_nouns %}
+                <li>{{ forloop.counter }}. {{ noun }} ({{ count }})</li>
+            {% empty %}
+                <li>추천 검색어가 없습니다.</li>
+            {% endfor %}
+        </ol>
+
+        <div class="back-link">
+            <a href="{% url 'news_webapp:first_view' %}">다시 검색하기</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>검색창</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-image: url("/static/news_webapp/images/main.jpg"); /* 배경 이미지 추가 */
+            background-size: cover; /* 이미지가 전체 화면을 채우도록 설정 */
+            background-position: center; /* 이미지 중앙 정렬 */
+            color: #9b59b6; /* 텍스트 색상 조정 (배경에 따라 다르게 설정할 수 있음) */
+        }
+        h1 {
+            text-align: center;
+        }
+        #result {
+            margin: 5% 0;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%; /* 폼 너비 100% */
+            max-width: 400px; /* 최대 너비를 줄임 */
+        }
+        input[type="text"] {
+            margin-bottom: 3%;  /* 입력 칸과 버튼 사이의 여백 추가 */
+            width: 100%; /* 입력 칸의 너비를 100%로 설정 */
+            padding: 2%; /* 패딩을 줄임 */
+            font-size: 1em; /* 글씨 크기 조정 */
+            border: 1px solid #ccc; /* 테두리 추가 */
+            border-radius: 5px; /* 둥근 테두리 */
+            text-align: center; /* 가운데 정렬 */
+        }
+        input[type="text"]:focus {
+            border-color: #007bff; /* 포커스 시 테두리 색상 변경 */
+            outline: none; /* 기본 아웃라인 제거 */
+        }
+        #loading {
+            display: none; /* 처음에는 숨겨둠 */
+            font-size: 1.2em;  /* 조금 더 크게 설정 */
+            font-weight: bold;  /* 굵은 글씨 */
+            text-align: center;
+        }
+        .dot {
+            opacity: 0; /* 처음에는 보이지 않음 */
+            transition: opacity 0.5s;
+        }
+    </style>
+</head>
+<body>
+    <h1>검색어를 입력하세요.</h1>
+
+    <button id="start-btn">음성 입력 시작</button>
+    <p id="result"></p>
+
+    <form method="post" id="searchForm">
+        {% csrf_token %}
+        <input type="text" id="text-input" name="query" placeholder="내용을 입력해 주세요. (예: 맛집)">
+        <button type="submit">검색</button>
+    </form>
+
+    <div id="loading">
+        <p>잠시만 기다려 주세요<span class="dot" id="dot1">.</span><span class="dot" id="dot2">.</span><span class="dot" id="dot3">.</span></p>
+    </div>
+
+    <script>
+        const startBtn = document.getElementById('start-btn');
+        const resultDisplay = document.getElementById('result');
+        const textInput = document.getElementById('text-input');
+        const searchForm = document.getElementById('searchForm');
+        const loading = document.getElementById('loading');
+        const dots = [document.getElementById('dot1'), document.getElementById('dot2'), document.getElementById('dot3')];
+
+        startBtn.addEventListener('click', () => {
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'ko-KR';
+            recognition.start();
+
+            recognition.onresult = (event) => {
+                const query = event.results[0][0].transcript;
+                resultDisplay.textContent = "음성 인식 결과: " + query;
+                textInput.value = query;  // 음성 인식 결과를 입력란에 추가
+            };
+
+            recognition.onerror = () => {
+                resultDisplay.textContent = "죄송합니다. 음성을 인식할 수 없습니다. 다시 시도해 주세요.";
+            };
+        });
+
+        // 폼 제출 시 로딩 표시
+        searchForm.addEventListener('submit', () => {
+            loading.style.display = 'block'; // 로딩 표시
+            animateDots(); // 점 애니메이션 시작
+        });
+
+        function animateDots() {
+            let count = 0;
+            setInterval(() => {
+                // 모든 점을 숨기기
+                dots.forEach(dot => dot.style.opacity = 0);
+
+                // 현재 카운트에 따라 점 표시
+                for (let i = 0; i <= count; i++) {
+                    if (i < dots.length) {
+                        dots[i].style.opacity = 1; // 해당 점을 보이도록
+                    }
+                }
+
+                // 카운트 증가
+                count = (count + 1) % dots.length; // 0, 1, 2 반복
+            }, 500); // 0.5초마다 변경
+        }
+    </script>
+</body>
+</html>
