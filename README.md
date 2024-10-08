@@ -170,3 +170,6 @@
 - **편의 기능 개선**: 검색 기록 보관, 핵심 단어에 대한 자동 검색 등 다양한 기능 구현.
 - **성능 최적화**: 로딩 속도 개선이 필요
 - **다국어 지원**: 다양한 언어의 음성 인식 기능 추가.
+
+![image](https://github.com/user-attachments/assets/2c49f007-0a8e-4284-a6cd-1f456f6e2105)
+![image](https://github.com/user-attachments/assets/fde65525-cf84-44c7-812b-a19fa7b8d36f)
